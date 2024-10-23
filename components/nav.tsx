@@ -5,11 +5,19 @@ import { useTheme } from "next-themes";
 import { Toggle } from "@/components/ui/toggle";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
+interface User {
+  email: string;
+  userId: string;
+}
 
 export function Navb() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [user, setUser] = useState<User | null>(null); // Define user with type User or null
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -24,10 +32,49 @@ export function Navb() {
 
     window.addEventListener("scroll", handleScroll);
 
+    // Fetch the current user from the protected-data API
+    const fetchUser = async () => {
+      try {
+        const response = await fetch("/api/users/auth/protected-data", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user); // Set the user if authenticated
+        } else {
+          setUser(null); // If not authenticated, set user to null
+        }
+      } catch (error) {
+        setUser(null); // In case of an error, assume not authenticated
+      }
+    };
+
+    fetchUser(); // Call the API to fetch user data
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      const response = await fetch('/api/users/auth/signout', {
+        method: 'GET',
+      });
+  
+      if (response.ok) {
+        // Redirect to login page after successful logout
+        router.push('/login');
+      } else {
+        console.error('Error signing out');
+      }
+    } catch (error) {
+      console.error('Sign out failed:', error);
+    }
+  };
 
   if (!mounted) return null;
 
@@ -40,20 +87,20 @@ export function Navb() {
       }`}
     >
       <div className="flex h-16 w-full items-center justify-between bg-background px-4 md:px-6">
-        <Link href="#" className="flex items-center gap-2" prefetch={false}>
+        <Link href="/" className="flex items-center gap-2" prefetch={false}>
           <MountainIcon className="h-6 w-6" />
           <span className="text-lg font-semibold mr-4">EasyTrack</span>
         </Link>
         <nav className="hidden items-center gap-4 md:flex">
           <Link
-            href="#"
+            href="/"
             className="text-sm font-medium transition-colors hover:text-primary"
             prefetch={false}
           >
             Home
           </Link>
           <Link
-            href="#"
+            href="/news"
             className="text-sm font-medium transition-colors hover:text-primary"
             prefetch={false}
           >
@@ -64,7 +111,7 @@ export function Navb() {
           <Toggle
             variant="outline"
             aria-label="Toggle dark mode"
-            className="hidden md:flex "
+            className="hidden md:flex"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           >
             {theme === "light" ? (
@@ -73,20 +120,34 @@ export function Navb() {
               <MoonIcon className="h-4 w-4" />
             )}
           </Toggle>
-          <Link
-            href="#"
-            className="text-sm font-medium transition-colors hover:text-primary"
-            prefetch={false}
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/signup"
-            className="inline-flex h-8 items-center justify-center rounded-md highlight px-4 text-sm font-medium shadow transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-            prefetch={false}
-          >
-            Register
-          </Link>
+          {user ? (
+            <>
+              <span>Welcome, {user.email}</span> {/* Access user.email */}
+              <Button
+                className="text-sm font-medium transition-colors hover:text-primary"
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="text-sm font-medium transition-colors hover:text-primary"
+                prefetch={false}
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/signup"
+                className="inline-flex h-8 items-center justify-center rounded-md highlight px-4 text-sm font-medium shadow transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                prefetch={false}
+              >
+                Register
+              </Link>
+            </>
+          )}
         </div>
         <Sheet>
           <SheetTrigger asChild>
@@ -97,7 +158,7 @@ export function Navb() {
           </SheetTrigger>
           <SheetContent side="right" className="w-[300px]">
             <div className="flex h-16 items-center justify-between px-4">
-              <Link href="#" className="flex items-center gap-2" prefetch={false}>
+              <Link href="/" className="flex items-center gap-2" prefetch={false}>
                 <MountainIcon className="h-6 w-6" />
                 <span className="text-lg font-semibold">EasyTrack</span>
               </Link>
@@ -116,7 +177,7 @@ export function Navb() {
             </div>
             <div className="grid gap-4 py-6 px-4">
               <Link
-                href="#"
+                href="/"
                 className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
                 prefetch={false}
               >
@@ -124,7 +185,7 @@ export function Navb() {
                 Home
               </Link>
               <Link
-                href="#"
+                href="/news"
                 className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
                 prefetch={false}
               >
@@ -132,21 +193,32 @@ export function Navb() {
                 News
               </Link>
               <div className="flex flex-col gap-2">
-                <Link
-                  href="#"
-                  className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
-                  prefetch={false}
-                >
-                  <LogInIcon className="h-5 w-5" />
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                  prefetch={false}
-                >
-                  Register
-                </Link>
+                {user ? (
+                  <Button
+                    className="text-sm font-medium transition-colors hover:text-primary"
+                    onClick={handleSignOut}
+                  >
+                    Sign Out
+                  </Button>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
+                      prefetch={false}
+                    >
+                      <LogInIcon className="h-5 w-5" />
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                      prefetch={false}
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </SheetContent>
@@ -156,6 +228,7 @@ export function Navb() {
     </header>
   );
 }
+
 
 
 function HomeIcon(props: any) {

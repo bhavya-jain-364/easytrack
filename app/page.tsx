@@ -1,4 +1,4 @@
-import { Navb } from "@/components/nav";
+import { Navb } from "@/components/Nav";
 
 export default function Home() {
   
