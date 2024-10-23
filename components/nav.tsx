@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 interface User {
+  name:string;
   email: string;
   userId: string;
 }
@@ -122,7 +123,7 @@ export function Navb() {
           </Toggle>
           {user ? (
             <>
-              <span>Welcome, {user.email}</span> {/* Access user.email */}
+              <span>Welcome, {user.name}</span> {/* Access user.email */}
               <Button
                 className="text-sm font-medium transition-colors hover:text-primary"
                 onClick={handleSignOut}
@@ -195,7 +196,7 @@ export function Navb() {
               <div className="flex flex-col gap-2">
                 {user ? (
                   <Button
-                    className="text-sm font-medium transition-colors hover:text-primary"
+                    className="text-sm font-medium transition-colors hover:text-primary cursor-pointer"
                     onClick={handleSignOut}
                   >
                     Sign Out
