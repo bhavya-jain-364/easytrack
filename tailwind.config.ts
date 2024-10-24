@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 import type { PluginAPI } from "tailwindcss/types/config"; // Import the PluginAPI type
 
 const config: Config = {
-  darkMode: ["class"],
+  darkMode: ["class"], // Enable class-based dark mode
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -60,12 +60,12 @@ const config: Config = {
     },
   },
   plugins: [
-    require("tailwindcss-animate"),
-    function (api: PluginAPI) { 
+    require("tailwindcss-animate"), // Animation plugin
+    function (api: PluginAPI) {
       const { addBase } = api;
       addBase({
-        'button': { cursor: 'pointer' },  // Apply cursor-pointer to all buttons
-        'a': { cursor: 'pointer' },       // Apply cursor-pointer to all links
+        'button': { cursor: 'pointer' }, // Apply cursor-pointer to all buttons
+        'a': { cursor: 'pointer' },      // Apply cursor-pointer to all links
       });
     },
   ],

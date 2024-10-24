@@ -101,7 +101,7 @@ export function Navb() {
             Home
           </Link>
           <Link
-            href="/news"
+            href="/stockcardtest"
             className="text-sm font-medium transition-colors hover:text-primary"
             prefetch={false}
           >
