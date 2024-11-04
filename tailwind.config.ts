@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
-import type { PluginAPI } from "tailwindcss/types/config"; // Import the PluginAPI type
+import type { PluginAPI } from "tailwindcss/types/config";
 
 const config: Config = {
-  darkMode: ["class"], // Enable class-based dark mode
+  darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -56,6 +56,19 @@ const config: Config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      fontFamily: {
+        geistSans: "var(--font-geist-sans)",
+        geistMono: "var(--font-geist-mono)",
+      },
+      keyframes: {
+        "shine": {
+          from: { backgroundPosition: '200% 0' },
+          to: { backgroundPosition: '-200% 0' },
+        },
+      },
+      animation: {
+        "shine": "shine 8s ease-in-out infinite",
       },
     },
   },

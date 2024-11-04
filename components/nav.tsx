@@ -135,17 +135,20 @@ export function Navb() {
             <>
               <Link
                 href="/login"
-                className="text-sm font-medium transition-colors hover:text-primary"
                 prefetch={false}
+                className="text-sm font-medium transition-colors hover:text-primary"
               >
-                Sign In
+                {/* <Button variant="gooeyLeft"> */}
+                  Sign In
+                {/* </Button> */}
               </Link>
               <Link
                 href="/signup"
-                className="inline-flex h-8 items-center justify-center rounded-md highlight px-4 text-sm font-medium shadow transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                 prefetch={false}
               >
-                Register
+                <Button variant="shine" className="text-sm font-medium ml-2">
+                  Register
+                </Button>
               </Link>
             </>
           )}
