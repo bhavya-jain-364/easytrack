@@ -12,6 +12,7 @@ import { DatePickerWithRange } from "@/components/ui/daterange"
 import React from "react"
 import { DateRange } from "react-day-picker"
 import { FinancialSummaryDialog } from "@/components/financial-summary-dialog"
+import { formatNumber } from "@/lib/utils"
 
 interface ChartData {
   name: string;
@@ -51,14 +52,6 @@ export default function ExpandableChartCard({
     setDateRange(range);
     setPeriod(''); // Reset period when date range changes
   };
-
-  const formatNumber = (num: number) => {
-    if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T'
-    if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B'
-    if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M'
-    if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K'
-    return num.toFixed(2)
-  }
 
   async function fetchStockData(period?: string, dateRange?: DateRange) {
     let period1, period2
@@ -155,12 +148,12 @@ export default function ExpandableChartCard({
           ))}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end pb-0">
+      <CardFooter className="flex justify-end pb-0 mb-2">
         <Button
           variant="ringHover"
           size="default"
           className="mr-2"
-          onClick={() => console.log("Button clicked")}
+          onClick={() => setShowFinancialSummary(true)}
         >
           Financial Summary
         </Button>
@@ -233,12 +226,6 @@ export default function ExpandableChartCard({
           )}
         </CardContent>
       </motion.div>
-      <Button 
-        variant="outline" 
-        onClick={() => setShowFinancialSummary(true)}
-      >
-        Financial Summary
-      </Button>
 
       <FinancialSummaryDialog 
         isOpen={showFinancialSummary}

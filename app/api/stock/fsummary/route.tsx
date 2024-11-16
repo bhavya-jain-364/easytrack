@@ -1,53 +1,51 @@
 import yahooFinance from 'yahoo-finance2';
 
 export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const symbol = searchParams.get('symbol');
+
   try {
-    const { searchParams } = new URL(request.url);
-    const symbol = searchParams.get('symbol');
+    const quote = await yahooFinance.quoteSummary(symbol, { modules: ['financialData'] });
+    const data = quote.financialData;
 
-    if (!symbol) {
-      return new Response(JSON.stringify({ error: 'Symbol is required' }), {
-        status: 400,
-      });
-    }
-
-    const result = await yahooFinance.quoteSummary(symbol, {
-      modules: ['financialData'],
-    });
-
-    const metrics = {
+    const formattedData = {
       valuation: {
-        targetHighPrice: result.financialData.targetHighPrice,
-        targetLowPrice: result.financialData.targetLowPrice,
-        targetMeanPrice: result.financialData.targetMeanPrice,
-        recommendationKey: result.financialData.recommendationKey,
+        targetHighPrice: data.targetHighPrice,
+        targetLowPrice: data.targetLowPrice,
+        targetMeanPrice: data.targetMeanPrice,
+        recommendationKey: data.recommendationKey,
+        recommendationMean: data.recommendationMean,
+        currentPrice: data.currentPrice,
+        numberOfAnalystOpinions: data.numberOfAnalystOpinions,
       },
       profitability: {
-        returnOnAssets: result.financialData.returnOnAssets,
-        returnOnEquity: result.financialData.returnOnEquity,
-        profitMargins: result.financialData.profitMargins,
-        grossMargins: result.financialData.grossMargins,
+        returnOnAssets: data.returnOnAssets,
+        returnOnEquity: data.returnOnEquity,
+        profitMargins: data.profitMargins,
+        grossMargins: data.grossMargins,
+        ebitdaMargins: data.ebitdaMargins,
       },
       growth: {
-        earningsGrowth: result.financialData.earningsGrowth,
-        revenueGrowth: result.financialData.revenueGrowth,
+        earningsGrowth: data.earningsGrowth,
+        revenueGrowth: data.revenueGrowth,
       },
       liquidity: {
-        quickRatio: result.financialData.quickRatio,
-        debtToEquity: result.financialData.debtToEquity,
+        quickRatio: data.quickRatio,
+        debtToEquity: data.debtToEquity,
+        currentRatio: data.currentRatio,
       },
       operational: {
-        totalRevenue: result.financialData.totalRevenue,
-        operatingMargins: result.financialData.operatingMargins,
+        totalRevenue: data.totalRevenue,
+        operatingMargins: data.operatingMargins,
+        freeCashflow: data.freeCashflow,
+        totalCashPerShare: data.totalCashPerShare,
+        revenuePerShare: data.revenuePerShare,
       },
     };
 
-    return new Response(JSON.stringify(metrics), {
-      status: 200,
-    });
+    return Response.json(formattedData);
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Failed to fetch data' }), {
-      status: 500,
-    });
+    console.error('Error fetching financial data:', error);
+    return Response.error();
   }
 }
