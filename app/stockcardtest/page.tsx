@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import ExpandableChartCard from "@/components/ui/ExpandableChartCard";
+import ExpandableChartCard from "@/components/ExpandableChartCard";
 import { DateRange } from "react-day-picker";
 interface ChartData {
   name: string;

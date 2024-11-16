@@ -63,6 +63,7 @@ export default function ExpandableChartCard({
         <Button
           variant="ringHover"
           size="default"
+          className="mr-2"
           onClick={() => console.log("Button clicked")}
         >
           Financial Summary
