@@ -31,10 +31,10 @@ export function StockRecommendationGauge({ recommendationMean, symbol }: { recom
         needleColor="#464A4F"
         needleBaseColor="#464A4F"
       />
-      {/* <div className="flex justify-between text-sm mt-2 px-4">
+      <div className="flex justify-between text-md px-10">
         <span>Bearish</span>
         <span>Bullish</span>
-      </div> */}
+      </div>
     </div>
   );
 }

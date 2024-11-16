@@ -98,7 +98,7 @@ export default function ExpandableChartCard({
 
         setStockLineChartData(formattedChartData)
         setAttributes([
-          { label: "Stock Name", value: detailsData.symbol },
+          { label: "Stock Name", value: detailsData.name  },
           { label: "Stock Price", value: `$${formatNumber(formattedChartData[formattedChartData.length - 1].value)}` },
         ])
 
@@ -134,7 +134,7 @@ export default function ExpandableChartCard({
         <div className="flex justify-between font-bold mb-4">
           {attributes.map((attr, index) => (
             <React.Fragment key={index}>
-              <span>{attr.label}: {attr.value}</span>
+              <span className="text-lg">{attr.label}: {attr.value}</span>
               {index < attributes.length - 1 && <Separator orientation="vertical" />}
             </React.Fragment>
           ))}
@@ -180,7 +180,7 @@ export default function ExpandableChartCard({
         <CardContent>
         <div className="flex items-start space-x-4">
           <div className="flex space-x-2">
-            {['1M', '6M', '1Y', '5Y', 'Max'].map((period, index) => (
+            {['1M', '6M', '1Y', '5Y', 'Max'].map((period, index) => ( //TODO: while mapping periods, useffect triggers the api call
               <React.Fragment key={period}>
                 <Button variant="linkHover2" onClick={() => onPeriodChange(period)}>
                   {period}

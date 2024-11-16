@@ -10,10 +10,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Stock symbol is required' }, { status: 400 });
     }
 
-    const queryOptions = { modules: ['summaryDetail'] };
+    const queryOptions = { modules: ['summaryDetail', 'price'] };
     const result = await yahooFinance.quoteSummary(stockSymbol, queryOptions);
 
     const { fiftyTwoWeekHigh, fiftyTwoWeekLow, marketCap, volume, trailingPE } = result.summaryDetail;
+    const { regularMarketPrice, shortName, currencySymbol } = result.price;
 
     return NextResponse.json({
       symbol: stockSymbol,
@@ -21,7 +22,10 @@ export async function GET(req: NextRequest) {
       fiftyTwoWeekLow,
       marketCap,
       volume,
-      trailingPE
+      trailingPE,
+      regularMarketPrice,
+      name: shortName,
+      currencySymbol
     }, { status: 200 });
   } catch (error) {
     console.error('Error fetching stock details:', error);
