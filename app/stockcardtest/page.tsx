@@ -110,14 +110,8 @@ export default function StockPage() {
     <div>
       <ExpandableChartCard
         title="Tesla Stock Overview"
-        attributes={attributes}
-        bottomAttributes={bottomAttributes}
-        lineChartData={stockLineChartData}
-        barChartData={stockBarChartData}
         symbol="TSLA"
-        period={period}
-        onPeriodChange={setPeriod}
-        onDateChange={setDateRange}
+        defaultPeriod={period}
       />
     </div>
   );

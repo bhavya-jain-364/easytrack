@@ -5,36 +5,132 @@ import { motion } from "framer-motion"
 import { ChevronDown, ChevronUp, X, CalendarIcon } from "lucide-react"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Line, LineChart, Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { DatePickerWithRange } from "@/components/ui/daterange"
 import React from "react"
 import { DateRange } from "react-day-picker"
+import { FinancialSummaryDialog } from "@/components/financial-summary-dialog"
 
-interface ExpandableChartCardProps {
-  title?: string
-  attributes?: { label: string; value: string }[]
-  bottomAttributes?: string[]
-  lineChartData?: { name: string; value: number }[]
-  barChartData?: { name: string; value: number }[]
-  symbol: string
-  period?: string
+interface ChartData {
+  name: string;
+  value: number;
 }
 
+interface Attribute {
+  label: string;
+  value: string;
+}
+
+interface ExpandableChartCardProps {
+  title?: string;
+  symbol: string;
+  defaultPeriod?: string;
+}
 
 export default function ExpandableChartCard({
   title = "Card Title",
-  attributes = [],
-  bottomAttributes = [],
-  lineChartData = [],
-  barChartData = [],
-  onPeriodChange,
-  onDateChange,
-}: ExpandableChartCardProps & { onPeriodChange: (period: string) => void, onDateChange: (range: DateRange) => void }) {
+  symbol,
+  defaultPeriod = '1Y'
+}: ExpandableChartCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [showFinancialSummary, setShowFinancialSummary] = useState(false)
+  const [stockLineChartData, setStockLineChartData] = useState<ChartData[]>([])
+  const [attributes, setAttributes] = useState<Attribute[]>([])
+  const [bottomAttributes, setBottomAttributes] = useState<string[]>([])
+  const [period, setPeriod] = useState<string>(defaultPeriod)
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
+
+  const onPeriodChange = (newPeriod: string) => {
+    setPeriod(newPeriod);
+    setDateRange(undefined); // Reset date range when period changes
+  };
+
+  const onDateChange = (range: DateRange) => {
+    setDateRange(range);
+    setPeriod(''); // Reset period when date range changes
+  };
+
+  const formatNumber = (num: number) => {
+    if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T'
+    if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B'
+    if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M'
+    if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K'
+    return num.toFixed(2)
+  }
+
+  async function fetchStockData(period?: string, dateRange?: DateRange) {
+    let period1, period2
+
+    if (dateRange) {
+      period1 = dateRange.from?.toISOString().split('T')[0]
+      period2 = dateRange.to?.toISOString().split('T')[0]
+    } else {
+      const currentDate = new Date()
+      switch (period) {
+        case '1M':
+          period1 = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).toISOString().split('T')[0]
+          break
+        case '6M':
+          period1 = new Date(currentDate.setMonth(currentDate.getMonth() - 6)).toISOString().split('T')[0]
+          break
+        case '1Y':
+          period1 = new Date(currentDate.setFullYear(currentDate.getFullYear() - 1)).toISOString().split('T')[0]
+          break
+        case '5Y':
+          period1 = new Date(currentDate.setFullYear(currentDate.getFullYear() - 5)).toISOString().split('T')[0]
+          break
+        case 'Max':
+          period1 = '1970-01-01'
+          break
+        default:
+          period1 = new Date(currentDate.setFullYear(currentDate.getFullYear() - 1)).toISOString().split('T')[0]
+      }
+      period2 = new Date().toISOString().split('T')[0]
+    }
+
+    try {
+      const chartResponse = await fetch(`/api/stock/chart?symbol=${symbol}&period1=${period1}&period2=${period2}`)
+      const detailsResponse = await fetch(`/api/stock/details?symbol=${symbol}`)
+
+      if (chartResponse.ok && detailsResponse.ok) {
+        const chartData = await chartResponse.json()
+        const detailsData = await detailsResponse.json()
+
+        const formattedChartData: ChartData[] = chartData.chartData.map((item: any) => ({
+          name: new Date(item.date).toLocaleDateString(),
+          value: item.close,
+        }))
+
+        setStockLineChartData(formattedChartData)
+        setAttributes([
+          { label: "Stock Name", value: detailsData.symbol },
+          { label: "Stock Price", value: `$${formatNumber(formattedChartData[formattedChartData.length - 1].value)}` },
+        ])
+
+        setBottomAttributes([
+          `52-wk High: ${formatNumber(detailsData.fiftyTwoWeekHigh)}`,
+          `52-wk Low: ${formatNumber(detailsData.fiftyTwoWeekLow)}`,
+          `Market Cap: ${formatNumber(detailsData.marketCap)}`,
+          `Volume: ${formatNumber(detailsData.volume)}`,
+          `P/E Ratio: ${formatNumber(detailsData.trailingPE)}`,
+        ])
+      }
+    } catch (error) {
+      console.error("Error fetching stock data:", error)
+    }
+  }
+
+  useEffect(() => {
+    fetchStockData(period)
+  }, [period, symbol])
+
+  useEffect(() => {
+    if (dateRange) {
+      fetchStockData(undefined, dateRange)
+    }
+  }, [dateRange, symbol])
 
   return (
     <Card className="w-[90%] mx-auto relative bg-card text-foreground">
@@ -102,7 +198,7 @@ export default function ExpandableChartCard({
           </div>
           <DatePickerWithRange onDateChange={onDateChange} />
         </div>
-          {lineChartData.length > 0 && (
+          {stockLineChartData.length > 0 && (
             <ChartContainer
               config={{
                 value: {
@@ -113,7 +209,7 @@ export default function ExpandableChartCard({
               className="w-full h-[300px]"
             >
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={lineChartData}>
+                <LineChart data={stockLineChartData}>
                   <CartesianGrid vertical={false} />
                   <XAxis dataKey="name" stroke="var(--text-color)" />
                   <YAxis
@@ -135,29 +231,20 @@ export default function ExpandableChartCard({
               </ResponsiveContainer>
             </ChartContainer>
           )}
-          {barChartData.length > 0 && (
-            <ChartContainer
-              config={{
-                value: {
-                  label: "Value",
-                  color: "hsl(var(--chart-2))",
-                },
-              }}
-              className="h-[150px] mt-4"
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={barChartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                  <XAxis dataKey="name" stroke="var(--text-color)" />
-                  <YAxis stroke="var(--text-color)" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="value" fill="hsl(var(--chart-2))" />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          )}
         </CardContent>
       </motion.div>
+      <Button 
+        variant="outline" 
+        onClick={() => setShowFinancialSummary(true)}
+      >
+        Financial Summary
+      </Button>
+
+      <FinancialSummaryDialog 
+        isOpen={showFinancialSummary}
+        onClose={() => setShowFinancialSummary(false)}
+        symbol={symbol}
+      />
     </Card>
   )
 }
