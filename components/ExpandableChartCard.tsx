@@ -11,7 +11,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { DatePickerWithRange } from "@/components/ui/daterange"
 import React from "react"
 import { DateRange } from "react-day-picker"
-import { FinancialSummaryDialog } from "@/components/financial-summary-dialog"
+import { FinancialSummaryDialog } from "@/components/FinancialSummaryDialog"
 import { formatNumber } from "@/lib/utils"
 
 interface ChartData {
