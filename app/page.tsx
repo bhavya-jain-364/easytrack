@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Navb } from "@/components/Nav";
 import ExpandableChartCard from "@/components/ExpandableChartCard";
+import AnimatedGridPattern from "@/components/ui/AnimatedGridPattern";
 
 interface User {
   name: string;
@@ -63,30 +64,43 @@ export default function Home() {
   return (
     <>
       <Navb />
-      <main className="container mx-auto px-4 pt-24">
-        {!user ? (
-          // Not logged in - show top 10 companies
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold mb-8">Top 10 Companies by Market Cap</h1>
-            <div className="grid gap-6">
-              {TOP_COMPANIES.map((symbol) => (
-                <ExpandableChartCard
-                  key={symbol}
-                  title={`${symbol} Stock Overview`}
-                  symbol={symbol}
-                  defaultPeriod="1Y"
-                />
-              ))}
+      <div className="relative min-h-screen">
+        {/* Animated Grid Background */}
+        <div className="fixed inset-0 z-0">
+          <AnimatedGridPattern
+            width={32}
+            height={32}
+            className="opacity-25 dark:opacity-40"
+            strokeDasharray="4 2"
+          />
+        </div>
+        
+        {/* Main Content */}
+        <main className="container mx-auto px-4 pt-24 relative z-10">
+          {!user ? (
+            // Not logged in - show top 10 companies
+            <div className="space-y-6">
+              <h1 className="text-3xl font-bold mb-8">Top 10 Companies by Market Cap</h1>
+              <div className="grid gap-6">
+                {TOP_COMPANIES.map((symbol) => (
+                  <ExpandableChartCard
+                    key={symbol}
+                    title={`${symbol} Stock Overview`}
+                    symbol={symbol}
+                    defaultPeriod="1Y"
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ) : (
-          // Logged in - placeholder for now
-          <div>
-            <h1 className="text-3xl font-bold mb-8">Welcome back, {user.name}!</h1>
-            {/* Add personalized content here later */}
-          </div>
-        )}
-      </main>
+          ) : (
+            // Logged in - placeholder for now
+            <div>
+              <h1 className="text-3xl font-bold mb-8">Welcome back, {user.name}!</h1>
+              {/* Add personalized content here later */}
+            </div>
+          )}
+        </main>
+      </div>
     </>
   );
 }

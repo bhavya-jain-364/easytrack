@@ -13,6 +13,7 @@ import React from "react"
 import { DateRange } from "react-day-picker"
 import { FinancialSummaryDialog } from "@/components/FinancialSummaryDialog"
 import { formatNumber } from "@/lib/utils"
+import { LoadingSpinner } from "./ui/loader"
 
 interface ChartData {
   name: string;
@@ -42,6 +43,7 @@ export default function ExpandableChartCard({
   const [bottomAttributes, setBottomAttributes] = useState<string[]>([])
   const [period, setPeriod] = useState<string>(defaultPeriod)
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
+  const [isLoading, setIsLoading] = useState(true)
 
   const onPeriodChange = (newPeriod: string) => {
     setPeriod(newPeriod);
@@ -54,6 +56,7 @@ export default function ExpandableChartCard({
   };
 
   async function fetchStockData(period?: string, dateRange?: DateRange) {
+    setIsLoading(true)
     let period1, period2
 
     if (dateRange) {
@@ -98,20 +101,25 @@ export default function ExpandableChartCard({
 
         setStockLineChartData(formattedChartData)
         setAttributes([
-          { label: "Stock Name", value: detailsData.name  },
-          { label: "Stock Price", value: `$${formatNumber(formattedChartData[formattedChartData.length - 1].value)}` },
+          { label: "Stock Name", value: detailsData.name },
+          { 
+            label: "Stock Price", 
+            value: `${detailsData.currencySymbol}${formatNumber(formattedChartData[formattedChartData.length - 1].value)}` 
+          },
         ])
 
         setBottomAttributes([
-          `52-wk High: ${formatNumber(detailsData.fiftyTwoWeekHigh)}`,
-          `52-wk Low: ${formatNumber(detailsData.fiftyTwoWeekLow)}`,
-          `Market Cap: ${formatNumber(detailsData.marketCap)}`,
+          `52-wk High: ${detailsData.currencySymbol}${formatNumber(detailsData.fiftyTwoWeekHigh)}`,
+          `52-wk Low: ${detailsData.currencySymbol}${formatNumber(detailsData.fiftyTwoWeekLow)}`,
+          `Market Cap: ${detailsData.currencySymbol}${formatNumber(detailsData.marketCap)}`,
           `Volume: ${formatNumber(detailsData.volume)}`,
           `P/E Ratio: ${formatNumber(detailsData.trailingPE)}`,
         ])
       }
     } catch (error) {
       console.error("Error fetching stock data:", error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -126,27 +134,35 @@ export default function ExpandableChartCard({
   }, [dateRange, symbol])
 
   return (
-    <Card className="w-[90%] mx-auto relative bg-card text-foreground">
+    <Card className="w-[90%] mx-auto relative bg-stockCard mb-4 text-foreground">
       <CardHeader className="flex justify-between items-start !flex-row">
         <h2 className="text-2xl font-bold">{title}</h2>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between font-bold mb-4">
-          {attributes.map((attr, index) => (
-            <React.Fragment key={index}>
-              <span className="text-lg">{attr.label}: {attr.value}</span>
-              {index < attributes.length - 1 && <Separator orientation="vertical" />}
-            </React.Fragment>
-          ))}
-        </div>
-        <div className="flex justify-between font-bold mb-4">
-          {bottomAttributes.map((attr, index) => (
-            <React.Fragment key={index}>
-              <span>{attr}</span>
-              {index < bottomAttributes.length - 1 && <Separator orientation="vertical" />}
-            </React.Fragment>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center items-center min-h-[200px]">
+            <LoadingSpinner className="h-8 w-8" />
+          </div>
+        ) : (
+          <>
+            <div className="flex justify-between font-bold mb-4">
+              {attributes.map((attr, index) => (
+                <React.Fragment key={index}>
+                  <span>{attr.label}: {attr.value}</span>
+                  {index < attributes.length - 1 && <Separator orientation="vertical" />}
+                </React.Fragment>
+              ))}
+            </div>
+            <div className="flex justify-between font-bold mb-4">
+              {bottomAttributes.map((attr, index) => (
+                <React.Fragment key={index}>
+                  <span>{attr}</span>
+                  {index < bottomAttributes.length - 1 && <Separator orientation="vertical" />}
+                </React.Fragment>
+              ))}
+            </div>
+          </>
+        )}
       </CardContent>
       <CardFooter className="flex justify-end pb-0 mb-2">
         <Button
