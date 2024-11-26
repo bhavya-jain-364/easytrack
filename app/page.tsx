@@ -87,7 +87,7 @@ export default function Home() {
                     key={symbol}
                     title={`${symbol} Stock Overview`}
                     symbol={symbol}
-                    defaultPeriod="1Y"
+                    defaultPeriod="6M"
                   />
                 ))}
               </div>

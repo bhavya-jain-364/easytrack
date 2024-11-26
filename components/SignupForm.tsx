@@ -143,7 +143,7 @@ export function SignupForm({ onSubmit, error, isLoading }: SignupFormProps) {
         </CardContent>
         <CardFooter>
           <Button
-            className="w-full highlight flex items-center justify-center"
+            className="w-full flex items-center justify-center"
             type="submit"
             disabled={isLoading}
           >

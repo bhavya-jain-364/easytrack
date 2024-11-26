@@ -3,6 +3,8 @@
 import { SignupForm } from "@/components/SignupForm";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -45,8 +47,18 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <SignupForm onSubmit={handleSignup} error={error} isLoading={isLoading} />
+    <div className="min-h-screen relative">
+      <Button
+        variant="ghost"
+        className="absolute top-4 left-4 flex items-center gap-2"
+        onClick={() => router.back()}
+      >
+        <ChevronLeft className="h-4 w-4" />
+        Back
+      </Button>
+      <div className="flex items-center justify-center min-h-screen">
+        <SignupForm onSubmit={handleSignup} error={error} isLoading={isLoading} />
+      </div>
     </div>
   );
 }

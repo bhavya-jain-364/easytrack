@@ -13,7 +13,7 @@ import React from "react"
 import { DateRange } from "react-day-picker"
 import { FinancialSummaryDialog } from "@/components/FinancialSummaryDialog"
 import { formatNumber } from "@/lib/utils"
-import { LoadingSpinner } from "./ui/loader"
+import { LoadingSpinner } from "./ui/loader"  
 
 interface ChartData {
   name: string;
@@ -207,11 +207,12 @@ export default function ExpandableChartCard({
           </div>
           <DatePickerWithRange onDateChange={onDateChange} />
         </div>
+        <br />
           {stockLineChartData.length > 0 && (
             <ChartContainer
               config={{
                 value: {
-                  label: "Value",
+                  label: "Price",
                   color: "hsl(var(--chart-1))",
                 },
               }}

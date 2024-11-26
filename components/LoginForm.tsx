@@ -115,7 +115,7 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
         </CardContent>
         <CardFooter>
           <Button
-            className="w-full highlight flex items-center justify-center"
+            className="w-full flex items-center justify-center"
             type="submit"
             disabled={isLoading}
           >
