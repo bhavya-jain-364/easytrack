@@ -3,6 +3,8 @@
 import { LoginForm } from "@/components/LoginForm";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -44,8 +46,16 @@ export default function LoginPage() {
     }
   }
 
-  return (
-    <div className="flex items-center justify-center min-h-screen">
+  return ( 
+      <div className="flex items-center justify-center min-h-screen">
+      <Button
+        variant="ghost"
+        className="absolute top-4 left-4 flex items-center gap-2"
+        onClick={() => router.back()}
+      >
+        <ChevronLeft className="h-4 w-4" />
+        Back
+      </Button>
       <LoginForm onSubmit={handleLogin} error={error} isLoading={isLoading} />
     </div>
   );
