@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
 import { ChevronDown, ChevronUp, X, CalendarIcon } from "lucide-react"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
@@ -34,7 +34,7 @@ interface ExpandableChartCardProps {
 export default function ExpandableChartCard({
   title = "Card Title",
   symbol,
-  defaultPeriod = '1Y'
+  defaultPeriod = '5Y'
 }: ExpandableChartCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [showFinancialSummary, setShowFinancialSummary] = useState(false)
@@ -47,91 +47,130 @@ export default function ExpandableChartCard({
 
   const onPeriodChange = (newPeriod: string) => {
     setPeriod(newPeriod);
-    setDateRange(undefined); // Reset date range when period changes
+    // setDateRange(undefined); // Reset date range when period changes
   };
 
   const onDateChange = (range: DateRange) => {
     setDateRange(range);
-    setPeriod(''); // Reset period when date range changes
+    // setPeriod(''); // Reset period when date range changes
   };
 
-  async function fetchStockData(period?: string, dateRange?: DateRange) {
-    setIsLoading(true)
-    let period1, period2
+  useEffect(() => {
+    const fetchStockDetails = async () => {
+      try {
+        const detailsResponse = await fetch(`/api/stock/details?symbol=${symbol}`);
+        if (detailsResponse.ok) {
+          const detailsData = await detailsResponse.json();
+          setAttributes([
+            { label: "Stock Name", value: detailsData.name },
+            { 
+              label: "Stock Price", 
+              value: `${detailsData.currencySymbol}${formatNumber(detailsData.regularMarketPrice)}` 
+            },
+          ]);
 
-    if (dateRange) {
-      period1 = dateRange.from?.toISOString().split('T')[0]
-      period2 = dateRange.to?.toISOString().split('T')[0]
-    } else {
-      const currentDate = new Date()
-      switch (period) {
-        case '1M':
-          period1 = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).toISOString().split('T')[0]
-          break
-        case '6M':
-          period1 = new Date(currentDate.setMonth(currentDate.getMonth() - 6)).toISOString().split('T')[0]
-          break
-        case '1Y':
-          period1 = new Date(currentDate.setFullYear(currentDate.getFullYear() - 1)).toISOString().split('T')[0]
-          break
-        case '5Y':
-          period1 = new Date(currentDate.setFullYear(currentDate.getFullYear() - 5)).toISOString().split('T')[0]
-          break
-        case 'Max':
-          period1 = '1970-01-01'
-          break
-        default:
-          period1 = new Date(currentDate.setFullYear(currentDate.getFullYear() - 1)).toISOString().split('T')[0]
+          setBottomAttributes([
+            `52-wk High: ${detailsData.currencySymbol}${formatNumber(detailsData.fiftyTwoWeekHigh)}`,
+            `52-wk Low: ${detailsData.currencySymbol}${formatNumber(detailsData.fiftyTwoWeekLow)}`,
+            `Market Cap: ${detailsData.currencySymbol}${formatNumber(detailsData.marketCap)}`,
+            `Volume: ${formatNumber(detailsData.volume)}`,
+            `P/E Ratio: ${formatNumber(detailsData.trailingPE)}`,
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching stock details:", error);
       }
-      period2 = new Date().toISOString().split('T')[0]
+    };
+
+    fetchStockDetails();
+    setIsLoading(false);
+  }, [symbol]); // Only run once when component mounts or symbol changes
+
+  const fetchChartByPeriod = useCallback(async (period: string) => {
+    // setIsLoading(true);
+    const currentDate = new Date();
+    let period1;
+
+    switch (period) {
+      case '1M':
+        period1 = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).toISOString().split('T')[0];
+        break;
+      case '6M':
+        period1 = new Date(currentDate.setMonth(currentDate.getMonth() - 6)).toISOString().split('T')[0];
+        break;
+      case '1Y':
+        period1 = new Date(currentDate.setFullYear(currentDate.getFullYear() - 1)).toISOString().split('T')[0];
+        break;
+      case '5Y':
+        period1 = new Date(currentDate.setFullYear(currentDate.getFullYear() - 5)).toISOString().split('T')[0];
+        break;
+      case 'Max':
+        period1 = '1970-01-01';
+        break;
+      default:
+        period1 = new Date(currentDate.setFullYear(currentDate.getFullYear() - 1)).toISOString().split('T')[0];
     }
+    const period2 = new Date().toISOString().split('T')[0];
 
     try {
-      const chartResponse = await fetch(`/api/stock/chart?symbol=${symbol}&period1=${period1}&period2=${period2}`)
-      const detailsResponse = await fetch(`/api/stock/details?symbol=${symbol}`)
-
-      if (chartResponse.ok && detailsResponse.ok) {
-        const chartData = await chartResponse.json()
-        const detailsData = await detailsResponse.json()
-
+      const chartResponse = await fetch(`/api/stock/chart?symbol=${symbol}&period1=${period1}&period2=${period2}`);
+      if (chartResponse.ok) {
+        const chartData = await chartResponse.json();
         const formattedChartData: ChartData[] = chartData.chartData.map((item: any) => ({
           name: new Date(item.date).toLocaleDateString(),
           value: item.close,
-        }))
-
-        setStockLineChartData(formattedChartData)
-        setAttributes([
-          { label: "Stock Name", value: detailsData.name },
-          { 
-            label: "Stock Price", 
-            value: `${detailsData.currencySymbol}${formatNumber(formattedChartData[formattedChartData.length - 1].value)}` 
-          },
-        ])
-
-        setBottomAttributes([
-          `52-wk High: ${detailsData.currencySymbol}${formatNumber(detailsData.fiftyTwoWeekHigh)}`,
-          `52-wk Low: ${detailsData.currencySymbol}${formatNumber(detailsData.fiftyTwoWeekLow)}`,
-          `Market Cap: ${detailsData.currencySymbol}${formatNumber(detailsData.marketCap)}`,
-          `Volume: ${formatNumber(detailsData.volume)}`,
-          `P/E Ratio: ${formatNumber(detailsData.trailingPE)}`,
-        ])
+        }));
+        setStockLineChartData(formattedChartData);
       }
     } catch (error) {
-      console.error("Error fetching stock data:", error)
+      console.error("Error fetching stock data:", error);
     } finally {
-      setIsLoading(false)
+      // setIsLoading(false);
     }
-  }
+  }, [symbol]);
 
-  useEffect(() => {
-    fetchStockData(period)
-  }, [period, symbol])
+  const fetchChartByDateRange = useCallback(async (dateRange: DateRange) => {
+    if (!dateRange.from || !dateRange.to) return;
+    
+    // setIsLoading(true);
+    const period1 = dateRange.from.toISOString().split('T')[0];
+    const period2 = dateRange.to.toISOString().split('T')[0];
 
-  useEffect(() => {
-    if (dateRange) {
-      fetchStockData(undefined, dateRange)
+    try {
+      const chartResponse = await fetch(`/api/stock/chart?symbol=${symbol}&period1=${period1}&period2=${period2}`);
+      if (chartResponse.ok) {
+        const chartData = await chartResponse.json();
+        const formattedChartData: ChartData[] = chartData.chartData.map((item: any) => ({
+          name: new Date(item.date).toLocaleDateString(),
+          value: item.close,
+        }));
+        setStockLineChartData(formattedChartData);
+      }
+    } catch (error) {
+      console.error("Error fetching stock data:", error);
+    } finally {
+      // setIsLoading(false);
     }
-  }, [dateRange, symbol])
+  }, [symbol]);
+
+  // Initial load effect
+  useEffect(() => {
+    if (!symbol) return;
+    fetchChartByPeriod(defaultPeriod);
+  }, [defaultPeriod]);
+
+  // Period change effect
+  useEffect(() => {
+    if (!symbol || !period || !isExpanded) return;
+    
+    fetchChartByPeriod(period);
+  }, [period]);
+
+  // Date range change effect
+  useEffect(() => {
+    if (!symbol || !dateRange || !isExpanded) return;
+    fetchChartByDateRange(dateRange);
+  }, [dateRange]);
 
   return (
     <Card className="w-[90%] mx-auto relative bg-stockCard mb-4 text-foreground">
