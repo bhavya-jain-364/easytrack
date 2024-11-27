@@ -95,7 +95,9 @@ export function SearchBar({ onStockSelect }: SearchBarProps) {
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className={cn(
           "relative bg-background border rounded-md shadow-sm",
-          isExpanded && "rounded-b-none border-b-0 shadow-none"
+          isExpanded 
+            ? "rounded-b-none border-b-0 shadow-none transition-none" 
+            : "transition-all duration-300"
         )}
       >
         <Input
@@ -104,7 +106,7 @@ export function SearchBar({ onStockSelect }: SearchBarProps) {
           value={query}
           onChange={handleInputChange}
           onFocus={() => setIsExpanded(true)}
-          className="w-full pr-10 border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="w-full pr-10 border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 transition-none"
         />
         <Button
           size="icon"

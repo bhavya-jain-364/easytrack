@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Navb } from "@/components/Nav";
 import ExpandableChartCard from "@/components/ExpandableChartCard";
 import AnimatedGridPattern from "@/components/ui/AnimatedGridPattern";
+import { SearchBar } from "@/components/SearchBar";
 
 interface User {
   name: string;
@@ -96,7 +97,14 @@ export default function Home() {
             // Logged in - placeholder for now
             <div>
               <h1 className="text-3xl font-bold mb-8">Welcome back, {user.name}!</h1>
-              {/* Add personalized content here later */}
+              <div className="mb-8">
+                <SearchBar 
+                  onStockSelect={(symbol) => {
+                    // We'll implement this later
+                    alert(`Selected stock: ${symbol}`);
+                  }} 
+                />
+              </div>
             </div>
           )}
         </main>
