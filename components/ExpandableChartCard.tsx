@@ -26,13 +26,11 @@ interface Attribute {
 }
 
 interface ExpandableChartCardProps {
-  title?: string;
   symbol: string;
   defaultPeriod?: string;
 }
 
 export default function ExpandableChartCard({
-  title = "Card Title",
   symbol,
   defaultPeriod = '1Y'
 }: ExpandableChartCardProps) {
@@ -44,6 +42,7 @@ export default function ExpandableChartCard({
   const [period, setPeriod] = useState<string>(defaultPeriod)
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(true)
+  const [cardTitle, setCardTitle] = useState<string>("")
 
   const onPeriodChange = (newPeriod: string) => {
     setPeriod(newPeriod);
@@ -57,33 +56,35 @@ export default function ExpandableChartCard({
 
   useEffect(() => {
     const fetchStockDetails = async () => {
+      setIsLoading(true);
       try {
         const detailsResponse = await fetch(`/api/stock/details?symbol=${symbol}`);
         if (detailsResponse.ok) {
           const detailsData = await detailsResponse.json();
+          setCardTitle(detailsData.name)
           setAttributes([
-            { label: "Stock Name", value: detailsData.name },
+            { label: "Stock Symbol", value: detailsData.symbol },
             { 
               label: "Stock Price", 
               value: `${detailsData.currencySymbol}${formatNumber(detailsData.regularMarketPrice)}` 
             },
           ]);
-
           setBottomAttributes([
-            `52-wk High: ${detailsData.currencySymbol}${formatNumber(detailsData.fiftyTwoWeekHigh)}`,
-            `52-wk Low: ${detailsData.currencySymbol}${formatNumber(detailsData.fiftyTwoWeekLow)}`,
-            `Market Cap: ${detailsData.currencySymbol}${formatNumber(detailsData.marketCap)}`,
-            `Volume: ${formatNumber(detailsData.volume)}`,
-            `P/E Ratio: ${formatNumber(detailsData.trailingPE)}`,
+            `52-wk High: ${detailsData.currencySymbol}${detailsData.fiftyTwoWeekHigh == 0 ? 'Unavailable' : formatNumber(detailsData.fiftyTwoWeekHigh)}`,
+            `52-wk Low: ${detailsData.currencySymbol}${detailsData.fiftyTwoWeekLow == 0 ? 'Unavailable' : formatNumber(detailsData.fiftyTwoWeekLow)}`,
+            `Market Cap: ${detailsData.currencySymbol}${detailsData.marketCap == 0 ? 'Unavailable' : formatNumber(detailsData.marketCap)}`,
+            `Volume: ${detailsData.volume == 0 ? 'Unavailable' : formatNumber(detailsData.volume)}`,
+            `P/E Ratio: ${detailsData.trailingPE == 0 ? 'Unavailable' : formatNumber(detailsData.trailingPE)}`,
           ]);
         }
       } catch (error) {
         console.error("Error fetching stock details:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchStockDetails();
-    setIsLoading(false);
   }, [symbol]); // Only run once when component mounts or symbol changes
 
   const fetchChartByPeriod = useCallback(async (period: string) => {
@@ -174,16 +175,16 @@ export default function ExpandableChartCard({
 
   return (
     <Card className="w-[90%] mx-auto relative bg-stockCard border-stockCardBorder border mb-4 text-foreground">
-      <CardHeader className="flex justify-between items-start !flex-row">
-        <h2 className="text-2xl font-bold">{title}</h2>
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <div className="flex justify-center items-center min-h-[200px]">
-            <LoadingSpinner className="h-8 w-8" />
-          </div>
-        ) : (
-          <>
+      {isLoading ? (
+        <div className="flex justify-center items-center min-h-[200px]">
+          <LoadingSpinner className="h-8 w-8" />
+        </div>
+      ) : (
+        <>
+          <CardHeader className="flex justify-between items-start !flex-row">
+            <h2 className="text-2xl font-bold">{cardTitle}</h2>
+          </CardHeader>
+          <CardContent>
             <div className="flex justify-between font-bold mb-4">
               {attributes.map((attr, index) => (
                 <React.Fragment key={index}>
@@ -200,89 +201,88 @@ export default function ExpandableChartCard({
                 </React.Fragment>
               ))}
             </div>
-          </>
-        )}
-      </CardContent>
-      <CardFooter className="flex justify-end pb-0 mb-2">
-        <Button
-          variant="ringHover"
-          size="default"
-          className="mr-2"
-          onClick={() => setShowFinancialSummary(true)}
-        >
-          Financial Summary
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsExpanded(!isExpanded)}
-          aria-label={isExpanded ? "Collapse card" : "Expand card"}
-        >
-          {isExpanded ? (
-            <ChevronUp className="h-4 w-4 transition-transform duration-200" />
-          ) : (
-            <ChevronDown className="h-4 w-4 transition-transform duration-200" />
-          )}
-        </Button>
-      </CardFooter>
-      <motion.div
-        initial={false}
-        animate={{ height: isExpanded ? "auto" : 0 }}
-        transition={{ duration: 0.3 }}
-        className="overflow-hidden pt-1.5"
-      >
-        <Separator className="mb-4 bg-gray-400" />
-        <CardContent>
-        <div className="flex items-start space-x-4">
-          <div className="flex space-x-2">
-            {['1M', '6M', '1Y', '5Y', 'Max'].map((period, index) => ( //TODO: while mapping periods, useffect triggers the api call
-              <React.Fragment key={period}>
-                <Button variant="linkHover2" onClick={() => onPeriodChange(period)}>
-                  {period}
-                </Button>
-                {index < 4 && <Separator orientation="vertical" />}
-              </React.Fragment>
-            ))}
-          </div>
-          <DatePickerWithRange onDateChange={onDateChange} />
-        </div>
-        <br />
-          {stockLineChartData.length > 0 && (
-            <ChartContainer
-              config={{
-                value: {
-                  label: "Price",
-                  color: "hsl(var(--chart-1))",
-                },
-              }}
-              className="w-full h-[300px]"
+          </CardContent>
+          <CardFooter className="flex justify-end pb-0 mb-2">
+            <Button
+              variant="ringHover"
+              size="default"
+              className="mr-2"
+              onClick={() => setShowFinancialSummary(true)}
             >
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={stockLineChartData}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis dataKey="name" stroke="var(--text-color)" />
-                  <YAxis
-                    stroke="var(--text-color)"
-                    domain={[
-                      (dataMin: number) => dataMin * 0.9, // Set base to 10% below the minimum value
-                      'auto'
-                    ]}
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line
-                    type="monotone"
-                    dataKey="value"
-                    stroke="hsl(var(--chart-1))"
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          )}
-        </CardContent>
-      </motion.div>
-
+              Financial Summary
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsExpanded(!isExpanded)}
+              aria-label={isExpanded ? "Collapse card" : "Expand card"}
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+              ) : (
+                <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+              )}
+            </Button>
+          </CardFooter>
+          <motion.div
+            initial={false}
+            animate={{ height: isExpanded ? "auto" : 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden pt-1.5"
+          >
+            <Separator className="mb-4 bg-gray-400" />
+            <CardContent>
+            <div className="flex items-start space-x-4">
+              <div className="flex space-x-2">
+                {['1M', '6M', '1Y', '5Y', 'Max'].map((period, index) => ( //TODO: while mapping periods, useffect triggers the api call
+                  <React.Fragment key={period}>
+                    <Button variant="linkHover2" onClick={() => onPeriodChange(period)}>
+                      {period}
+                    </Button>
+                    {index < 4 && <Separator orientation="vertical" />}
+                  </React.Fragment>
+                ))}
+              </div>
+              <DatePickerWithRange onDateChange={onDateChange} />
+            </div>
+            <br />
+              {stockLineChartData.length > 0 && (
+                <ChartContainer
+                  config={{
+                    value: {
+                      label: "Price",
+                      color: "hsl(var(--chart-1))",
+                    },
+                  }}
+                  className="w-full h-[300px]"
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={stockLineChartData}>
+                      <CartesianGrid vertical={false} />
+                      <XAxis dataKey="name" stroke="var(--text-color)" />
+                      <YAxis
+                        stroke="var(--text-color)"
+                        domain={[
+                          (dataMin: number) => dataMin * 0.9, // Set base to 10% below the minimum value
+                          'auto'
+                        ]}
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="hsl(var(--chart-1))"
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              )}
+            </CardContent>
+          </motion.div>
+        </>
+      )}
       <FinancialSummaryDialog 
         isOpen={showFinancialSummary}
         onClose={() => setShowFinancialSummary(false)}

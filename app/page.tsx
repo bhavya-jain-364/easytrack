@@ -69,6 +69,8 @@ export default function Home() {
 
     if (user) {
       fetchUserStocks();
+    } else {
+      setUserStocks(TOP_COMPANIES);
     }
   }, [user]);
 
@@ -87,50 +89,34 @@ export default function Home() {
     <>
       <Navb />
       <div className="relative min-h-screen">
-        {/* Animated Grid Background */}
         <div className="fixed inset-0 z-0">
           <AnimatedGridPattern
             width={32}
             height={32}
-            className="opacity-25 dark:opacity-40"
+            className="opacity-40 dark:opacity-40"
             strokeDasharray="4 2"
           />
         </div>
         
-        {/* Main Content */}
         <main className="container mx-auto px-4 pt-24 relative z-10">
-          {!user ? (
-            // Not logged in - show top 10 companies
-            <div className="space-y-6">
-              <h1 className="text-3xl font-bold mb-8">Log In to Track Your Favorite Stocks!</h1>
-              <div className="grid gap-6">
-                {TOP_COMPANIES.map((symbol) => (
-                  <ExpandableChartCard
-                    key={symbol}
-                    title={`${symbol} Stock Overview`}
-                    symbol={symbol}
-                    // defaultPeriod="6M"
-                  />
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div>
-              <h1 className="text-3xl font-bold mb-8">Welcome back, {user.name}!</h1>
+          <div className="space-y-6">
+            <h1 className="text-3xl font-bold mb-8">
+              {user ? `Welcome back, ${user.name}!` : 'Log In to Track Your Favorite Stocks!'}
+            </h1>
+            {user && (
               <div className="mb-8 flex justify-start w-full max-w-md">
                 <SearchBar />
               </div>
-              <div className="grid gap-6">
-                {userStocks.map((symbol) => (
-                  <ExpandableChartCard
-                    key={symbol}
-                    title={`${symbol} Stock Overview`}
-                    symbol={symbol}
-                  />
-                ))}
-              </div>
+            )}
+            <div className="grid gap-6">
+              {userStocks.map((symbol) => (
+                <ExpandableChartCard
+                  key={symbol}
+                  symbol={symbol}
+                />
+              ))}
             </div>
-          )}
+          </div>
         </main>
       </div>
     </>
