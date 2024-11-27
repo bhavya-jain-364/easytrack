@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command"
 import { Search, Loader2, X } from 'lucide-react'
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 
 const fetchStockSuggestions = async (query: string) => {
   try {
@@ -35,7 +36,7 @@ interface StockSuggestion {
   name: string;
 }
 
-async function addStockForUser(symbol: string): Promise<{ success: boolean; message: string }> {
+async function addStockForUser(symbol: string): Promise<{ success: boolean; message: string; status?: number }> {
   try {
     const response = await fetch('/api/users/addstock', {
       method: 'POST',
@@ -49,7 +50,8 @@ async function addStockForUser(symbol: string): Promise<{ success: boolean; mess
     
     return {
       success: response.ok,
-      message: response.ok ? `Stock ${symbol} added successfully!` : (data.error || 'Failed to add stock')
+      message: response.ok ? `Stock ${symbol} added successfully!` : (data.error || 'Failed to add stock'),
+      status: response.status
     };
   } catch (error) {
     console.error('Error adding stock:', error);
@@ -97,7 +99,20 @@ export function SearchBar({}: SearchBarProps) {
     setQuery('');
     setIsExpanded(false);
     const result = await addStockForUser(suggestion.symbol);
-    alert(result.message); 
+    
+    if (result.success) {
+      toast.success(result.message, {
+        description: `${suggestion.name} (${suggestion.symbol}) has been added to your watchlist`,
+      });
+    } else if (result.status === 400) {
+      toast.error("Stock Already Exists", {
+        description: `${suggestion.name} (${suggestion.symbol}) is already in your watchlist`,
+      });
+    } else {
+      toast.error(result.message, {
+        description: "Please try again or contact support if the issue persists",
+      });
+    }
   };
 
   const handleClickOutside = (e: MouseEvent) => {
