@@ -82,38 +82,38 @@ export function Navb() {
 
   return (
     <header
-      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+      className={`fixed top-0 z-50 w-full transition-all duration-150 ${
         isScrolled
           ? "bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-md"
           : "bg-transparent"
       }`}
     >
       <div className="flex h-16 w-full items-center justify-between bg-background px-4 md:px-6">
-        <Link href="/" className="flex items-center gap-2" prefetch={false}>
+        <Link href="/" className="flex items-center gap-2 transition-colors duration-150" prefetch={false}>
           <MountainIcon className="h-6 w-6" />
           <span className="text-lg font-semibold mr-4">EasyTrack</span>
         </Link>
         <nav className="hidden items-center gap-4 md:flex">
           <Link
             href="/"
-            className="text-sm font-medium transition-colors hover:text-primary"
+            className="text-md font-light transition-colors duration-150 hover:text-primary px-4 py-2 rounded-md"
             prefetch={false}
           >
             Home
           </Link>
           <Link
             href="/stockcardtest"
-            className="text-sm font-medium transition-colors hover:text-primary"
+            className="text-md font-light transition-colors duration-150 hover:text-primary px-4 py-2 rounded-md"
             prefetch={false}
           >
             News
           </Link>
         </nav>
-        <div className="flex items-center gap-4 ml-auto">
+        <div className="flex items-center gap-3 ml-auto">
           <Toggle
-            variant="outline"
+            variant="default"
             aria-label="Toggle dark mode"
-            className="hidden md:flex"
+            className="md:flex transition-colors duration-150"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           >
             {theme === "light" ? (
@@ -124,9 +124,9 @@ export function Navb() {
           </Toggle>
           {user ? (
             <>
-              <span>Welcome, {user.name}</span> {/* Access user.email */}
+              <span>Welcome, {user.name}</span>
               <Button
-                className="text-sm font-medium transition-colors hover:text-primary"
+                className="text-base font-medium transition-colors duration-150 hover:text-primary"
                 onClick={handleSignOut}
               >
                 Sign Out
@@ -136,19 +136,20 @@ export function Navb() {
             <>
               <Link
                 href="/login"
-                prefetch={false}
-                className="text-sm font-medium transition-colors hover:text-primary"
+                prefetch={true}
+                className="text-base transition-colors duration-150 hover:text-primary"
               >
-                {/* <Button variant="gooeyLeft"> */}
+                <Button variant="expandIcon" Icon={LogInIcon} iconPlacement="right"
+                className="text-md font-light">
                   Sign In
-                {/* </Button> */}
+                </Button>
               </Link>
               <Link
                 href="/signup"
-                prefetch={false}
+                prefetch={true}
               >
                 <Button
-                  className="relative text-sm font-medium bg-accent-foreground hover:bg-accent-foreground/80 transition-all duration-300"
+                  className="relative text-md font-medium bg-accent-foreground hover:bg-accent-foreground/80 transition-all duration-150"
                 >
                   <BorderBeam 
                     duration={5}
@@ -164,21 +165,21 @@ export function Navb() {
         </div>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="md:hidden">
+            <Button variant="outline" size="icon" className="md:hidden transition-all duration-150">
               <MenuIcon className="h-6 w-6" />
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="w-[300px]">
             <div className="flex h-16 items-center justify-between px-4">
-              <Link href="/" className="flex items-center gap-2" prefetch={false}>
+              <Link href="/" className="flex items-center gap-2 transition-colors duration-150" prefetch={false}>
                 <MountainIcon className="h-6 w-6" />
                 <span className="text-lg font-semibold">EasyTrack</span>
               </Link>
               <Toggle
                 variant="outline"
                 aria-label="Toggle dark mode"
-                className="md:hidden"
+                className="md:hidden transition-colors duration-150"
                 onClick={() => setTheme(theme === "light" ? "dark" : "light")}
               >
                 {theme === "dark" ? (
@@ -191,7 +192,7 @@ export function Navb() {
             <div className="grid gap-4 py-6 px-4">
               <Link
                 href="/"
-                className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
+                className="flex items-center gap-2 text-md font-light transition-colors duration-150 hover:text-primary px-4 py-2 rounded-md"
                 prefetch={false}
               >
                 <HomeIcon className="h-5 w-5" />
@@ -199,7 +200,7 @@ export function Navb() {
               </Link>
               <Link
                 href="/news"
-                className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
+                className="flex items-center gap-2 text-md font-light transition-colors duration-150 hover:text-primary px-4 py-2 rounded-md"
                 prefetch={false}
               >
                 <NewspaperIcon className="h-5 w-5" />
@@ -208,7 +209,7 @@ export function Navb() {
               <div className="flex flex-col gap-2">
                 {user ? (
                   <Button
-                    className="text-sm font-medium transition-colors hover:text-primary cursor-pointer"
+                    className="text-sm font-medium transition-colors duration-150 hover:text-primary cursor-pointer"
                     onClick={handleSignOut}
                   >
                     Sign Out
@@ -217,7 +218,7 @@ export function Navb() {
                   <>
                     <Link
                       href="/login"
-                      className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
+                      className="flex items-center gap-2 text-sm font-medium transition-colors duration-150 hover:text-primary"
                       prefetch={false}
                     >
                       <LogInIcon className="h-5 w-5" />
@@ -228,7 +229,7 @@ export function Navb() {
                       prefetch={false}
                     >
                       <Button
-                        className="relative text-sm font-medium w-full"
+                        className="relative text-sm font-medium w-full transition-all duration-150"
                         variant="default"
                       >
                         <BorderBeam 
