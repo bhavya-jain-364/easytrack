@@ -80,7 +80,7 @@ export default function Home() {
           {!user ? (
             // Not logged in - show top 10 companies
             <div className="space-y-6">
-              <h1 className="text-3xl font-bold mb-8">Top 10 Companies by Market Cap</h1>
+              <h1 className="text-3xl font-bold mb-8">Log In to Track Your Favorite Stocks!</h1>
               <div className="grid gap-6">
                 {TOP_COMPANIES.map((symbol) => (
                   <ExpandableChartCard

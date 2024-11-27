@@ -6,6 +6,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 interface User {
   name:string;
@@ -146,7 +147,15 @@ export function Navb() {
                 href="/signup"
                 prefetch={false}
               >
-                <Button variant="shine" className="text-sm font-medium ml-2">
+                <Button
+                  className="relative text-sm font-medium bg-accent-foreground hover:bg-accent-foreground/80 transition-all duration-300"
+                >
+                  <BorderBeam 
+                    duration={5}
+                    size={70}
+                    borderWidth={3}
+                    delay={5}
+                  />
                   Register
                 </Button>
               </Link>
@@ -216,10 +225,20 @@ export function Navb() {
                     </Link>
                     <Link
                       href="/signup"
-                      className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                       prefetch={false}
                     >
-                      Register
+                      <Button
+                        className="relative text-sm font-medium w-full"
+                        variant="default"
+                      >
+                        <BorderBeam 
+                          colorFrom="hsl(var(--primary))"
+                          colorTo="hsl(var(--primary-foreground))"
+                          duration={20}
+                          size={250}
+                        />
+                        Register
+                      </Button>
                     </Link>
                   </>
                 )}

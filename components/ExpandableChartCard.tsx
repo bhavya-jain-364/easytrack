@@ -34,7 +34,7 @@ interface ExpandableChartCardProps {
 export default function ExpandableChartCard({
   title = "Card Title",
   symbol,
-  defaultPeriod = '5Y'
+  defaultPeriod = '1Y'
 }: ExpandableChartCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [showFinancialSummary, setShowFinancialSummary] = useState(false)
