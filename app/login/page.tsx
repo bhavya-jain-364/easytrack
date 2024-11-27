@@ -51,7 +51,7 @@ export default function LoginPage() {
       <Button
         variant="ghost"
         className="absolute top-4 left-4 flex items-center gap-2"
-        onClick={() => router.back()}
+        onClick={() => router.push("/")}
       >
         <ChevronLeft className="h-4 w-4" />
         Back

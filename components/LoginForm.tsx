@@ -15,6 +15,7 @@ import { LoadingSpinner } from "./ui/loader";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { validateEmail, validatePassword } from "@/lib/validation";
+import Link from 'next/link';
 
 interface LoginFormProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
@@ -28,7 +29,6 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
 
   function handleValidation(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     // Clear previous errors
     setEmailError(null);
     setPasswordError(null);
@@ -81,7 +81,7 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
               placeholder="Email"
               type="email"
               className={cn(
-                "text-foreground bg-input border border-border",
+                "text-foreground bg-primary-foreground border border-border",
                 emailError || (!passwordError && error) ? "border-destructive border-2" : ""
               )}
             />
@@ -102,7 +102,7 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
               placeholder="Password"
               type="password"
               className={cn(
-                "text-foreground bg-input border border-border",
+                "text-foreground bg-primary-foreground border border-border",
                 passwordError ? "border-destructive border-2" : ""
               )}
             />
@@ -113,7 +113,7 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
             )}
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="pb-4">
           <Button
             className="w-full flex items-center justify-center"
             type="submit"
@@ -130,8 +130,11 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
           </Button>
         </CardFooter>
       </form>
-      <p className="text-sm mt-4 text-center">
-        Don't have an account? <a href="/signup" className="text-blue-500">Sign up here!</a>
+      <p className="text-sm mt-4 text-center pb-2">
+        Don't have an account? &nbsp;
+        <Link href="/signup" passHref className="text-blue-500">
+          Sign up here!
+        </Link>
       </p>
     </Card>
   );

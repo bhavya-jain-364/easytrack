@@ -19,7 +19,7 @@ import {
   validateEmail,
   validatePassword,
 } from "@/lib/validation";
-
+import Link from 'next/link';
 interface SignupFormProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
   error: string | null;
@@ -74,7 +74,7 @@ export function SignupForm({ onSubmit, error, isLoading }: SignupFormProps) {
       <CardHeader>
         <CardTitle>Create an account</CardTitle>
         <CardDescription>
-          Enter your email below to create your account
+          Enter your details below to create your account
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleValidation}>
@@ -93,7 +93,7 @@ export function SignupForm({ onSubmit, error, isLoading }: SignupFormProps) {
               name="name"
               placeholder="Full name"
               className={cn(
-                "text-foreground bg-input border border-border",
+                "text-foreground bg-primary-foreground border border-border",
                 nameError ? "border-destructive border-2" : ""
               )}
             />
@@ -109,7 +109,7 @@ export function SignupForm({ onSubmit, error, isLoading }: SignupFormProps) {
               placeholder="Email"
               type="email"
               className={cn(
-                "text-foreground bg-input border border-border",
+                "text-foreground bg-primary-foreground border border-border",
                 emailError || (!nameError && error) ? "border-destructive border-2" : ""
               )}
             />
@@ -130,7 +130,7 @@ export function SignupForm({ onSubmit, error, isLoading }: SignupFormProps) {
               placeholder="Password"
               type="password"
               className={cn(
-                "text-foreground bg-input border border-border",
+                "text-foreground bg-primary-foreground border border-border",
                 passwordError ? "border-destructive border-2" : ""
               )}
             />
@@ -141,7 +141,7 @@ export function SignupForm({ onSubmit, error, isLoading }: SignupFormProps) {
             )}
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="pb-4">
           <Button
             className="w-full flex items-center justify-center"
             type="submit"
@@ -158,6 +158,12 @@ export function SignupForm({ onSubmit, error, isLoading }: SignupFormProps) {
           </Button>
         </CardFooter>
       </form>
+      <p className="text-sm mt-4 text-center pb-2">
+        Already have an account? &nbsp;
+        <Link href="/login" passHref className="text-blue-500">
+          Log in here!
+        </Link>
+      </p>
     </Card>
   );
 }
