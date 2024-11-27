@@ -22,6 +22,7 @@ export async function POST(req: Request) {
     name,
     email,
     password: hashedPassword,
+    stocks: [],
     createdAt: new Date(),
   });
 

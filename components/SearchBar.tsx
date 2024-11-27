@@ -28,16 +28,39 @@ const fetchStockSuggestions = async (query: string) => {
   }
 }
 
-interface SearchBarProps {
-  onStockSelect?: (symbol: string) => void;
-}
+interface SearchBarProps {}
 
 interface StockSuggestion {
   symbol: string;
   name: string;
 }
 
-export function SearchBar({ onStockSelect }: SearchBarProps) {
+async function addStockForUser(symbol: string): Promise<{ success: boolean; message: string }> {
+  try {
+    const response = await fetch('/api/users/addstock', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ symbol }),
+    });
+
+    const data = await response.json();
+    
+    return {
+      success: response.ok,
+      message: response.ok ? `Stock ${symbol} added successfully!` : (data.error || 'Failed to add stock')
+    };
+  } catch (error) {
+    console.error('Error adding stock:', error);
+    return {
+      success: false,
+      message: 'Failed to add stock'
+    };
+  }
+}
+
+export function SearchBar({}: SearchBarProps) {
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState<StockSuggestion[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -70,11 +93,12 @@ export function SearchBar({ onStockSelect }: SearchBarProps) {
     }
   }
 
-  const handleSelectSuggestion = (suggestion: { symbol: string, name: string }) => {
-    setQuery('')
-    setIsExpanded(false)
-    onStockSelect?.(suggestion.symbol)
-  }
+  const handleSelectSuggestion = async (suggestion: { symbol: string, name: string }) => {
+    setQuery('');
+    setIsExpanded(false);
+    const result = await addStockForUser(suggestion.symbol);
+    alert(result.message); 
+  };
 
   const handleClickOutside = (e: MouseEvent) => {
     if (inputRef.current && !inputRef.current.contains(e.target as Node)) {

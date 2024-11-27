@@ -99,10 +99,6 @@ export default function Home() {
               <h1 className="text-3xl font-bold mb-8">Welcome back, {user.name}!</h1>
               <div className="mb-8">
                 <SearchBar 
-                  onStockSelect={(symbol) => {
-                    // We'll implement this later
-                    alert(`Selected stock: ${symbol}`);
-                  }} 
                 />
               </div>
             </div>
