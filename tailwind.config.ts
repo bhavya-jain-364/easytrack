@@ -20,6 +20,9 @@ const config: Config = {
   			stockCard: {
   				DEFAULT: 'hsl(var(--stock-card))'
   			},
+			stockCardBorder: {
+				DEFAULT: 'hsl(var(--stock-card-border))'
+			},
   			popover: {
   				DEFAULT: 'hsl(var(--popover))',
   				foreground: 'hsl(var(--popover-foreground))'

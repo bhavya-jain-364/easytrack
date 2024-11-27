@@ -173,7 +173,7 @@ export default function ExpandableChartCard({
   }, [dateRange]);
 
   return (
-    <Card className="w-[90%] mx-auto relative bg-stockCard mb-4 text-foreground">
+    <Card className="w-[90%] mx-auto relative bg-stockCard border-stockCardBorder border mb-4 text-foreground">
       <CardHeader className="flex justify-between items-start !flex-row">
         <h2 className="text-2xl font-bold">{title}</h2>
       </CardHeader>

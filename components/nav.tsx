@@ -93,7 +93,7 @@ export function Navb() {
           <MountainIcon className="h-6 w-6" />
           <span className="text-lg font-semibold mr-4">EasyTrack</span>
         </Link>
-        <nav className="hidden items-center gap-4 md:flex">
+        <nav className="hidden items-center gap-0 md:flex">
           <Link
             href="/"
             className="text-md font-light transition-colors duration-150 hover:text-primary px-4 py-2 rounded-md"
@@ -189,7 +189,7 @@ export function Navb() {
                 )}
               </Toggle>
             </div>
-            <div className="grid gap-4 py-6 px-4">
+            <div className="grid gap-2 py-6 px-4">
               <Link
                 href="/"
                 className="flex items-center gap-2 text-md font-light transition-colors duration-150 hover:text-primary px-4 py-2 rounded-md"
