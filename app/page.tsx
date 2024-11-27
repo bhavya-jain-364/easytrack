@@ -29,6 +29,7 @@ const TOP_COMPANIES = [
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userStocks, setUserStocks] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -50,6 +51,26 @@ export default function Home() {
 
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    const fetchUserStocks = async () => {
+      try {
+        const response = await fetch('/api/users/fetchstocklist');
+        if (response.ok) {
+          const data = await response.json();
+          setUserStocks(data.stocks);
+        } else {
+          console.error('Failed to fetch user stocks');
+        }
+      } catch (error) {
+        console.error('Error fetching user stocks:', error);
+      }
+    };
+
+    if (user) {
+      fetchUserStocks();
+    }
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -94,12 +115,19 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            // Logged in - placeholder for now
             <div>
               <h1 className="text-3xl font-bold mb-8">Welcome back, {user.name}!</h1>
-              <div className="mb-8">
-                <SearchBar 
-                />
+              <div className="mb-8 flex justify-start w-full max-w-md">
+                <SearchBar />
+              </div>
+              <div className="grid gap-6">
+                {userStocks.map((symbol) => (
+                  <ExpandableChartCard
+                    key={symbol}
+                    title={`${symbol} Stock Overview`}
+                    symbol={symbol}
+                  />
+                ))}
               </div>
             </div>
           )}
