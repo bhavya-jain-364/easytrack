@@ -27,9 +27,9 @@ export function StockRecommendationGauge({ recommendationMean, symbol }: { recom
         arcWidth={0.25}
         percent={normalizedValue}
         formatTextValue={() => getRecommendation(recommendationMean)}
-        textColor="#ffffff"
-        needleColor="#464A4F"
-        needleBaseColor="#464A4F"
+        needleColor="hsl(var(--muted-foreground))"
+        needleBaseColor="hsl(var(--muted-foreground))"
+        textColor="hsl(var(--foreground))"
       />
       <div className="flex justify-between text-md px-10">
         <span>Bearish</span>

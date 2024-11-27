@@ -232,10 +232,9 @@ export function Navb() {
                         variant="default"
                       >
                         <BorderBeam 
-                          colorFrom="hsl(var(--primary))"
-                          colorTo="hsl(var(--primary-foreground))"
                           duration={20}
                           size={250}
+                          borderWidth={4}
                         />
                         Register
                       </Button>
