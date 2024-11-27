@@ -6,19 +6,19 @@ import { useDebouncedCallback } from 'use-debounce'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command"
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command"
 import { Search, Loader2, X } from 'lucide-react'
 import { cn } from "@/lib/utils"
 
-// Mock function to simulate API call
 const fetchStockSuggestions = async (query: string) => {
   try {
     const response = await fetch(`/api/stock/search?q=${query}`);
     if (response.ok) {
       const data = await response.json();
+      console.log('API Response:', data);
       return data.results.map((stock: any) => ({
         symbol: stock.symbol,
-        name: stock.shortname || stock.longname || 'Unknown'
+        name: stock.name
       }));
     }
     return [];
@@ -51,6 +51,7 @@ export function SearchBar({ onStockSelect }: SearchBarProps) {
         const newSuggestions = await fetchStockSuggestions(value)
         setSuggestions(newSuggestions.slice(0, 5))
         setIsLoading(false)
+        console.log(newSuggestions);
       } else {
         setSuggestions([])
       }
@@ -141,19 +142,31 @@ export function SearchBar({ onStockSelect }: SearchBarProps) {
             className="bg-background border border-t-0 rounded-b-md shadow-sm -mt-px"
           >
             <Command className="border-none">
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup heading="Suggestions">
-                {suggestions.map((suggestion, index) => (
-                  <CommandItem
-                    key={index}
-                    onSelect={() => handleSelectSuggestion(suggestion)}
-                    className="flex justify-between"
-                  >
-                    <span className="font-medium">{suggestion.symbol}</span>
-                    <span className="text-muted-foreground">{suggestion.name}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+              <CommandList className="max-h-full overflow-hidden">
+                {suggestions.length === 0 ? (
+                  <CommandEmpty>No results found.</CommandEmpty>
+                ) : (
+                  <CommandGroup heading="Suggestions">
+                    {(() => {
+                      const items = [];
+                      for (let i = 0; i < suggestions.length; i++) {
+                        const suggestion = suggestions[i];
+                        items.push(
+                          <CommandItem
+                            key={suggestion.symbol}
+                            onSelect={() => handleSelectSuggestion(suggestion)}
+                            className="flex justify-between"
+                          >
+                            <span className="font-medium">{suggestion.symbol}</span>
+                            <span className="text-muted-foreground">{suggestion.name}</span>
+                          </CommandItem>
+                        );
+                      }
+                      return items;
+                    })()}
+                  </CommandGroup>
+                )}
+              </CommandList>
             </Command>
           </motion.div>
         )}
