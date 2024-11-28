@@ -108,7 +108,7 @@ export default function Home() {
                 <SearchBar />
               </div>
             )}
-            <div className="grid gap-6">
+            <div className="grid justify-self-stretch">
               {userStocks.map((symbol) => (
                 <ExpandableChartCard
                   key={symbol}

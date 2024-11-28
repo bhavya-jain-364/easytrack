@@ -129,7 +129,7 @@ export function SearchBar({}: SearchBarProps) {
   }, [])
 
   return (
-    <div className="w-full max-w-md mx-auto" ref={inputRef}>
+    <div className="w-full max-w-md relative" ref={inputRef}>
       <motion.div
         layout
         transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -178,7 +178,7 @@ export function SearchBar({}: SearchBarProps) {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="bg-background border border-t-0 rounded-b-md shadow-sm -mt-px"
+            className="absolute w-full bg-background border border-t-0 rounded-b-md shadow-sm -mt-px z-50"
           >
             <Command className="border-none">
               <CommandList className="max-h-full overflow-hidden">
@@ -186,23 +186,16 @@ export function SearchBar({}: SearchBarProps) {
                   <CommandEmpty>No results found.</CommandEmpty>
                 ) : (
                   <CommandGroup heading="Suggestions">
-                    {(() => {
-                      const items = [];
-                      for (let i = 0; i < suggestions.length; i++) {
-                        const suggestion = suggestions[i];
-                        items.push(
-                          <CommandItem
-                            key={suggestion.symbol}
-                            onSelect={() => handleSelectSuggestion(suggestion)}
-                            className="flex justify-between"
-                          >
-                            <span className="font-medium">{suggestion.symbol}</span>
-                            <span className="text-muted-foreground">{suggestion.name}</span>
-                          </CommandItem>
-                        );
-                      }
-                      return items;
-                    })()}
+                    {suggestions.map((suggestion) => (
+                      <CommandItem
+                        key={suggestion.symbol}
+                        onSelect={() => handleSelectSuggestion(suggestion)}
+                        className="flex justify-between"
+                      >
+                        <span className="font-medium">{suggestion.symbol}</span>
+                        <span className="text-muted-foreground">{suggestion.name}</span>
+                      </CommandItem>
+                    ))}
                   </CommandGroup>
                 )}
               </CommandList>
