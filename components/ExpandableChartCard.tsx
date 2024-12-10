@@ -12,7 +12,7 @@ import { DatePickerWithRange } from "@/components/ui/daterange"
 import React from "react"
 import { DateRange } from "react-day-picker"
 import { FinancialSummaryDialog } from "@/components/FinancialSummaryDialog"
-import { formatNumber } from "@/lib/utils"
+import { formatNumber, formatStockPrice } from "@/lib/utils"
 import { LoadingSpinner } from "./ui/loader"  
 
 interface ChartData {
@@ -66,12 +66,12 @@ export default function ExpandableChartCard({
             { label: "Stock Symbol", value: detailsData.symbol },
             { 
               label: "Stock Price", 
-              value: `${detailsData.currencySymbol}${formatNumber(detailsData.regularMarketPrice)}` 
+              value: `${detailsData.currencySymbol}${formatStockPrice(detailsData.regularMarketPrice)}` 
             },
           ]);
           setBottomAttributes([
-            `52-wk High: ${detailsData.currencySymbol}${detailsData.fiftyTwoWeekHigh == 0 ? 'Unavailable' : formatNumber(detailsData.fiftyTwoWeekHigh)}`,
-            `52-wk Low: ${detailsData.currencySymbol}${detailsData.fiftyTwoWeekLow == 0 ? 'Unavailable' : formatNumber(detailsData.fiftyTwoWeekLow)}`,
+            `52-wk High: ${detailsData.currencySymbol}${detailsData.fiftyTwoWeekHigh == 0 ? 'Unavailable' : formatStockPrice(detailsData.fiftyTwoWeekHigh)}`,
+            `52-wk Low: ${detailsData.currencySymbol}${detailsData.fiftyTwoWeekLow == 0 ? 'Unavailable' : formatStockPrice(detailsData.fiftyTwoWeekLow)}`,
             `Market Cap: ${detailsData.currencySymbol}${detailsData.marketCap == 0 ? 'Unavailable' : formatNumber(detailsData.marketCap)}`,
             `Volume: ${detailsData.volume == 0 ? 'Unavailable' : formatNumber(detailsData.volume)}`,
             `P/E Ratio: ${detailsData.trailingPE == 0 ? 'Unavailable' : formatNumber(detailsData.trailingPE)}`,
