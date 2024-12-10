@@ -81,7 +81,7 @@ export function SearchBar({}: SearchBarProps) {
         setSuggestions([])
       }
     },
-    300 //300ms debounce time to avoid too many requests
+    100 //300ms debounce time to avoid too many requests
   )
 
   useEffect(() => {

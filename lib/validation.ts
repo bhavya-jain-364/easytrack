@@ -15,9 +15,9 @@ export function validateName(name: string): string | null {
   }
   
   export function validatePassword(password: string): string | null {
-    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,10}$/;
+    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,30}$/;
     if (!regex.test(password)) {
-      return "Password must be 4-10 characters long, with at least one uppercase letter, one number, and one special character";
+      return "Password must be 4-30 characters long, with at least one uppercase letter, one number, and one special character";
     }
     return null;
   }

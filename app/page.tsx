@@ -40,10 +40,12 @@ export default function Home() {
           setUser(data.user);
         } else {
           setUser(null);
+          setUserStocks(TOP_COMPANIES);
         }
       } catch (error) {
         console.error('Error fetching user:', error);
         setUser(null);
+        setUserStocks(TOP_COMPANIES);
       } finally {
         setIsLoading(false);
       }
@@ -69,9 +71,7 @@ export default function Home() {
 
     if (user) {
       fetchUserStocks();
-    } else {
-      setUserStocks(TOP_COMPANIES);
-    }
+    } 
   }, [user]);
 
   if (isLoading) {

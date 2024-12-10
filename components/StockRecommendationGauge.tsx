@@ -30,6 +30,9 @@ export function StockRecommendationGauge({ recommendationMean, symbol }: { recom
         needleColor="hsl(var(--muted-foreground))"
         needleBaseColor="hsl(var(--muted-foreground))"
         textColor="hsl(var(--foreground))"
+        animateDuration={1000}
+        animDelay={50}
+        // animate={false}
       />
       <div className="flex justify-between text-md px-10">
         <span>Bearish</span>
