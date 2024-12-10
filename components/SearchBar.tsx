@@ -29,7 +29,9 @@ const fetchStockSuggestions = async (query: string) => {
   }
 }
 
-interface SearchBarProps {}
+interface SearchBarProps {
+  onStockAdded?: (symbol: string) => void;
+}
 
 interface StockSuggestion {
   symbol: string;
@@ -62,7 +64,7 @@ async function addStockForUser(symbol: string): Promise<{ success: boolean; mess
   }
 }
 
-export function SearchBar({}: SearchBarProps) {
+export function SearchBar({ onStockAdded }: SearchBarProps) {
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState<StockSuggestion[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -101,6 +103,7 @@ export function SearchBar({}: SearchBarProps) {
     const result = await addStockForUser(suggestion.symbol);
     
     if (result.success) {
+      onStockAdded?.(suggestion.symbol);
       toast.success(result.message, {
         description: `${suggestion.name} (${suggestion.symbol}) has been added to your watchlist`,
       });

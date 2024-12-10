@@ -74,6 +74,10 @@ export default function Home() {
     } 
   }, [user]);
 
+  const handleStockAdded = (symbol: string) => {
+    setUserStocks(prev => [...prev, symbol]);
+  };
+
   if (isLoading) {
     return (
       <>
@@ -105,7 +109,7 @@ export default function Home() {
             </h1>
             {user && (
               <div className="mb-8 flex justify-start w-full max-w-md">
-                <SearchBar />
+                <SearchBar onStockAdded={handleStockAdded} />
               </div>
             )}
             <div className="grid justify-self-stretch">
