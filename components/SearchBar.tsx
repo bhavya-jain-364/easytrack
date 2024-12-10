@@ -103,10 +103,10 @@ export function SearchBar({ onStockAdded }: SearchBarProps) {
     const result = await addStockForUser(suggestion.symbol);
     
     if (result.success) {
-      onStockAdded?.(suggestion.symbol);
       toast.success(result.message, {
         description: `${suggestion.name} (${suggestion.symbol}) has been added to your watchlist`,
       });
+      onStockAdded?.(suggestion.symbol);
     } else if (result.status === 400) {
       toast.error("Stock Already Exists", {
         description: `${suggestion.name} (${suggestion.symbol}) is already in your watchlist`,

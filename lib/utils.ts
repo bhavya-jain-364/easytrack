@@ -13,3 +13,8 @@ export const formatNumber = (num: number) => {
   if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K'
   return num.toFixed(2)
 }
+
+export const formatStockPrice = (num: number) => {
+  if (!num) return 'Unavailable';
+  return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
