@@ -17,6 +17,7 @@ export async function GET(request: Request) {
         recommendationMean: data.recommendationMean,
         currentPrice: data.currentPrice,
         numberOfAnalystOpinions: data.numberOfAnalystOpinions,
+        CurrencyName: data.financialCurrency,
       },
       profitability: {
         returnOnAssets: data.returnOnAssets,

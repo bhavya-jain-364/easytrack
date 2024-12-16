@@ -5,7 +5,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { MagicCard } from "@/components/ui/magic-card";
 import FlickeringGrid from "@/components/ui/flickering-grid";
 import { LoadingSpinner } from "@/components/ui/loader";
-import { formatNumber } from "@/lib/utils"
+import { formatBigNumber, formatNumberToCurrency, formatBigNumberToCurrency } from "@/lib/utils"
 import { StockRecommendationGauge } from '@/components/StockRecommendationGauge';
 
 interface FinancialMetrics {
@@ -17,6 +17,7 @@ interface FinancialMetrics {
     recommendationMean: number;
     currentPrice: number;
     numberOfAnalystOpinions: number;
+    CurrencyName: string;
   };
   profitability: {
     returnOnAssets: number;
@@ -91,37 +92,37 @@ export function FinancialSummaryDialog({
             {/* Row 1 */}
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Current Price</p>
-              <p className="text-xl ">${formatNumber(metrics.valuation.currentPrice)}</p>
+              <p className="text-xl ">${formatNumberToCurrency(metrics.valuation.currentPrice, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Target High</p>
-              <p className="text-xl ">${formatNumber(metrics.valuation.targetHighPrice)}</p>
+              <p className="text-xl ">${formatNumberToCurrency(metrics.valuation.targetHighPrice, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Target Low</p>
-              <p className="text-xl ">${formatNumber(metrics.valuation.targetLowPrice)}</p>
+              <p className="text-xl ">${formatNumberToCurrency(metrics.valuation.targetLowPrice, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Target Mean</p>
-              <p className="text-xl ">${formatNumber(metrics.valuation.targetMeanPrice)}</p>
+              <p className="text-xl ">${formatNumberToCurrency(metrics.valuation.targetMeanPrice, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Revenue Growth</p>
-              <p className="text-xl ">{formatNumber(metrics.growth.revenueGrowth * 100)}%</p>
+              <p className="text-xl ">{formatBigNumber(metrics.growth.revenueGrowth * 100)}%</p>
             </MagicCard>
 
             {/* Row 2 */}
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">ROA</p>
-              <p className="text-xl ">{formatNumber(metrics.profitability.returnOnAssets * 100)}%</p>
+              <p className="text-xl ">{formatBigNumber(metrics.profitability.returnOnAssets * 100)}%</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">ROE</p>
-              <p className="text-xl ">{formatNumber(metrics.profitability.returnOnEquity * 100)}%</p>
+              <p className="text-xl ">{formatBigNumber(metrics.profitability.returnOnEquity * 100)}%</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Earnings Growth</p>
-              <p className="text-xl ">{formatNumber(metrics.growth.earningsGrowth * 100)}%</p>
+              <p className="text-xl ">{formatBigNumber(metrics.growth.earningsGrowth * 100)}%</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Analyst Count</p>
@@ -135,15 +136,15 @@ export function FinancialSummaryDialog({
             {/* Row 3 */}
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Debt/Equity</p>
-              <p className="text-xl ">{formatNumber(metrics.liquidity.debtToEquity)}</p>
+              <p className="text-xl ">{formatBigNumber(metrics.liquidity.debtToEquity)}</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Revenue</p>
-              <p className="text-xl ">${formatNumber(metrics.operational.totalRevenue)}</p>
+              <p className="text-xl ">${formatBigNumberToCurrency(metrics.operational.totalRevenue, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Operating Margins</p>
-              <p className="text-xl ">{formatNumber(metrics.operational.operatingMargins * 100)}%</p>
+              <p className="text-xl ">{formatBigNumberToCurrency(metrics.operational.operatingMargins * 100, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
             
             {/* Gauge Chart Card spanning multiple rows and columns */}
@@ -157,29 +158,29 @@ export function FinancialSummaryDialog({
             {/* Row 4 */}
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Current Ratio</p>
-              <p className="text-xl ">{formatNumber(metrics.liquidity.currentRatio)}</p>
+              <p className="text-xl ">{formatBigNumberToCurrency(metrics.liquidity.currentRatio, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Free Cash Flow</p>
-              <p className="text-xl ">${formatNumber(metrics.operational.freeCashflow)}</p>
+              <p className="text-xl ">${formatBigNumberToCurrency(metrics.operational.freeCashflow, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Cash Per Share</p>
-              <p className="text-xl ">${formatNumber(metrics.operational.totalCashPerShare)}</p>
+              <p className="text-xl ">${formatBigNumberToCurrency(metrics.operational.totalCashPerShare, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
 
             {/* Row 5 */}
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Quick Ratio</p>
-              <p className="text-xl ">{formatNumber(metrics.liquidity.quickRatio)}</p>
+              <p className="text-xl ">{formatBigNumber(metrics.liquidity.quickRatio)}</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">EBITDA Margin</p>
-              <p className="text-xl ">{formatNumber(metrics.profitability.ebitdaMargins * 100)}%</p>
+              <p className="text-xl ">{formatBigNumberToCurrency(metrics.profitability.ebitdaMargins * 100, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
             <MagicCard className="p-4">
               <p className="text-sm text-muted-foreground font-medium mb-1">Revenue Per Share</p>
-              <p className="text-xl ">${formatNumber(metrics.operational.revenuePerShare)}</p>
+              <p className="text-xl ">${formatBigNumberToCurrency(metrics.operational.revenuePerShare, metrics.valuation.CurrencyName)}</p>
             </MagicCard>
           </div>
         ) : null}

@@ -12,7 +12,7 @@ import { DatePickerWithRange } from "@/components/ui/daterange"
 import React from "react"
 import { DateRange } from "react-day-picker"
 import { FinancialSummaryDialog } from "@/components/FinancialSummaryDialog"
-import { formatNumber, formatStockPrice } from "@/lib/utils"
+import { formatBigNumber, formatStockPrice, formatBigNumberToCurrency } from "@/lib/utils"
 import { LoadingSpinner } from "./ui/loader"  
 
 interface ChartData {
@@ -72,9 +72,9 @@ export default function ExpandableChartCard({
           setBottomAttributes([
             `52-wk High: ${detailsData.currencySymbol}${detailsData.fiftyTwoWeekHigh == 0 ? 'Unavailable' : formatStockPrice(detailsData.fiftyTwoWeekHigh)}`,
             `52-wk Low: ${detailsData.currencySymbol}${detailsData.fiftyTwoWeekLow == 0 ? 'Unavailable' : formatStockPrice(detailsData.fiftyTwoWeekLow)}`,
-            `Market Cap: ${detailsData.currencySymbol}${detailsData.marketCap == 0 ? 'Unavailable' : formatNumber(detailsData.marketCap)}`,
-            `Volume: ${detailsData.volume == 0 ? 'Unavailable' : formatNumber(detailsData.volume)}`,
-            `P/E Ratio: ${detailsData.trailingPE == 0 ? 'Unavailable' : formatNumber(detailsData.trailingPE)}`,
+            `Market Cap: ${detailsData.currencySymbol}${detailsData.marketCap == 0 ? 'Unavailable' : formatBigNumber(detailsData.marketCap)}`,
+            `Volume: ${detailsData.volume == 0 ? 'Unavailable' : formatBigNumber(detailsData.volume)}`,
+            `P/E Ratio: ${detailsData.trailingPE == 0 ? 'Unavailable' : formatBigNumber(detailsData.trailingPE)}`,
           ]);
         }
       } catch (error) {
