@@ -2,7 +2,7 @@
 
 EasyTrack is a modern web application built with Next.js that allows users to track their stock portfolio, view real-time market data, and analyze financial information.
 
-## 📱 Features in Detail
+## 📱 Features
 
 ### Stock Tracking
 - Real-time price updates
