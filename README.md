@@ -41,5 +41,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Shadcn/UI](https://ui.shadcn.com/)
 - [Yahoo Finance API](https://www.yahoofinanceapi.com/)
 - [MongoDB](https://www.mongodb.com/)
-```
 
