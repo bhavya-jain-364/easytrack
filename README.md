@@ -43,15 +43,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [MongoDB](https://www.mongodb.com/)
 ```
 
-This README provides a much better overview of the project, its features, and how to get started. It includes:
-
-1. A clear project description
-2. Key features
-3. Technology stack
-4. Detailed setup instructions
-5. Project structure
-6. Contributing guidelines
-7. License information
-8. Acknowledgments
-
-The original README was just the default Next.js template (lines 1-36 in the original), which didn't provide enough information about the actual project.
